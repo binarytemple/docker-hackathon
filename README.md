@@ -52,79 +52,17 @@ This needs to be set in order for many of the (tutorial) scripts to work.
 
 ---
 
-Create a docker network for the purposes of the tutorial code: 
+Create a docker network for the purposes of the non kubernetes tutorial code: 
 
 ```
 docker network create hackday
 ```
 
----
 
-# If you are going to use Digital Ocean 
-
-Use a Centos 7.5 instance, Centos has the best docker support.
-
-You will want to have these packages installed:
+# Getting started 
 
 
-```bash
-yum update -y && yum -y install \
-git \
-jansson \
-jansson-devel \
-make \
-gcc \
-docker \
-vim \
-emacs \
-kubernetes-master \
-kubernetes-client \
-kubernetes
-```
-
----
-
-You can also provision your droplet with the following user-data : 
-
-digital ocean user-data equivalent
-
-```
-
-#cloud-config
-package_update: true
-
-#cloud-config
-package_upgrade: true
-
-#cloud-config
-packages:
-  - git
-  - jansson
-  - jansson-devel
-  - make
-  - gcc
-  - docker
-  - vim
-  - emacs
-  - kubernetes-master
-  - kubernetes-client
-  - kubernetes
-```
-
----
-
-You'll also need to start docker.
-
-```
-service docker start
-```
-
---- 
-
-Getting started 
-
-
-Don't forget to.. 
+Again... Don't forget to.. 
 
 ```
 export DOCKER_USER_ID=<your docker hub username>
@@ -425,9 +363,7 @@ docker build -f Dockerfile -t $DOCKER_USER_ID/sentiment-analysis-logic .
 ❯ docker kill jovial_carson
 jovial_carson
 ```
-
 ----
-
 
 Run the container on the shared network 
 
@@ -477,6 +413,73 @@ And we can curl it from the Alpine container, or the host ...
 172.20.0.3 - - [23/May/2018 22:38:10] "GET / HTTP/1.1" 404 -
 172.20.0.3 - - [23/May/2018 22:38:21] "GET / HTTP/1.1" 404 -
 ```
+
+---
+
+# If you are going to use Digital Ocean 
+
+Use a Centos 7.5 instance, Centos has the best docker support.
+
+---
+
+# Digital Ocean packages needed 
+
+
+```bash
+yum update -y && yum -y install \
+git \
+jansson \
+jansson-devel \
+make \
+gcc \
+docker \
+vim \
+emacs \
+kubernetes-master \
+kubernetes-client \
+kubernetes
+```
+
+---
+
+Or provision your droplet with the following user-data: 
+
+
+```
+
+#cloud-config
+package_update: true
+
+#cloud-config
+package_upgrade: true
+
+#cloud-config
+packages:
+  - git
+  - jansson
+  - jansson-devel
+  - make
+  - gcc
+  - docker
+  - vim
+  - emacs
+  - kubernetes-master
+  - kubernetes-client
+  - kubernetes
+```
+
+---
+
+Once you log into digital ocean ..
+
+You'll also need to start docker.
+
+```
+service docker start
+```
+
+--- 
+
 
 ---
 
