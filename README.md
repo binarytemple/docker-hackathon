@@ -1,5 +1,6 @@
 footer: © Erlang Solutions , 2018
 slidenumbers: true
+autoscale: true
 
 
 # Welcome to the docker hackathon
@@ -25,44 +26,66 @@ slidenumbers: true
 # The absolute basics
 
 ```
- docker run -ti alpine sh
+docker run --rm --name tiny-example -ti alpine sh
+```
+
+```
+/ # apk -y update && apk add vim
 ```
 ---
 
-Then login :
+# Committing and pushing images
+
+## Login
 
 ```
-docker login 
+docker login
 Authenticating with existing credentials...
 Login Succeeded
 ```
+
 ---
 
-Make sure of the following :
+# Commit and tag
 
-set an environmental variable `DOCKER_USER_ID` to your docker username.
+```
+❯ docker commit tiny-example bryanhuntesl/tiny-example
+```
 
-i.e
+```
+sha256:57d403f992660a6d83434f429ad42e7c80358aeae29edc9fb878493a24e4d299
+```
+---
+
+# Push the example image
+
+```
+❯ docker push  bryanhuntesl/tiny-example
+The push refers to repository [docker.io/bryanhuntesl/tiny-example]
+52ef672c4ccd: Pushed
+cd7100a72410: Mounted from bryanhuntesl/git-cache-http-server
+latest: digest: sha256:8106b6df1fb7c1a93a07a06accc1ea53b8ae8d66404766eb2e6b5a54d23c6101 size: 740
+```
+
+---
+
+# For the tutorial code - ensure  :
 
 ```
 export DOCKER_USER_ID=bryanhuntesl
 ```
 
-This needs to be set in order for many of the (tutorial) scripts to work.
-
----
-
-Create a docker network for the purposes of the non kubernetes tutorial code: 
+Create a docker network so the containers can talk to one another:
 
 ```
 docker network create hackday
 ```
+---
+
+# Getting started
 
 
-# Getting started 
-
-
-Again... Don't forget to.. 
+Again... Don't forget to..
 
 ```
 export DOCKER_USER_ID=<your docker hub username>
@@ -70,9 +93,42 @@ export DOCKER_USER_ID=<your docker hub username>
 
 ---
 
-Don't run all the npm, python, java stuff on your host!
+# Don't run all the npm, python, java stuff on your host!
 
 ---
+
+# Sample application overview (1)
+
+*  Client communicates with the single page web application
+
+* Application is built using NPM - runs on Nginx
+
+---
+
+# Sample application overview (2)
+
+ * The user interacting with the application triggers requests to the Spring WebApp.
+
+---
+
+# Sample application overview (3)
+
+* Spring WebApp forwards the requests for sentiment analysis to the Python app.
+
+---
+# Sample application overview (4)
+
+* Python Application calculates the sentiment and returns the result as a response.
+
+---
+
+# Sample application overview (5)
+
+* The Spring WebApp returns the response to the React app. (Which then represents the information to the user.)
+
+---
+
+# Sarcophagus
 
 Create a container for running the sample code:
 
@@ -85,6 +141,10 @@ docker run \
   centos:7
 ```
 
+---
+
+# Installing in the CentOS container
+
 Enter the container, update and install packages
 
 ```
@@ -95,18 +155,20 @@ yum -y install npm maven python-pip
 
 ---
 
+# Backups !
+
 It would be a shame to have to reinstall all those packages.
 
 Lets keep a copy.
 
 ```
-
 ❯ docker commit devtest devtest2
 sha256:af4ccff5543e1c1fbdf8d5c0200cef774ddb73eee85456a531586f12069d9f48
 
 ```
-
 ---
+
+# Kill and restore
 
 Ctrl-c to kill the container, relaunch from your new image :
 
@@ -119,9 +181,11 @@ docker run \
   devtest2
 ```
 
-It's still got all your stuff! 
+It's still got all your stuff!
 
 ---
+
+# Building the applications
 
 Lets get our hands dirty
 
@@ -142,16 +206,25 @@ On the host
 
 ----
 
+# Java fan club
+
 We've just built our first Java application.
+
+The first of many 😂
 
 ---
 
-Let's move on to the really dirty stuff.. NPM
+# Getting esoteric
+
+Let's move on to the really dirty stuff.. npm
 
 ```
 cd /work/sa-frontend
 npm install
 ```
+---
+
+# Getting esoteric (2)
 
 _Check the size of the npm downloads.._
 
@@ -166,16 +239,11 @@ _Check the size of the npm downloads.._
 21      ./sa-webapp
 ```
 
-Commit the container - I don't want to do that again..
-
-```
-❯ docker commit devtestv devtest3
-sha256:a3ee89c8f38c54dc4bc94e99024c5f52f472c47c09ca63aa8dcc5a239fdc2aba
-```
+_Commit the container - I don't want to do that again.._
 
 ---
 
-Now we need to create an optimised npm build
+# Create an optimised npm build
 
 ```bash
 [root@e9bddf049c64 sa-frontend]# npm run build
@@ -196,7 +264,9 @@ etc etc
 
 ---
 
-Not too bad, 'build' is what actually goes into our image
+# Shrunk!
+
+'build' is what actually goes into our image
 
 ```
 /bryanhuntesl/k8s-mastery master
@@ -208,14 +278,7 @@ Not too bad, 'build' is what actually goes into our image
 
 ---
 
-Commit the container, again...
-
- I don't want to go through that twice.
-
-```
-❯ docker commit devtest devtestv4
-sha256:ede9c447007a899a1663f6f2dba81a11075ebac1363bf388f3cbbd58df803ff9
-```
+# Commit the container, again...
 
 ---
 
@@ -233,10 +296,9 @@ docker run \
 --mount type=bind,source="$(pwd)",target=/work \
 devtest4
 ```
-
 ---
 
-# Running the frontend 
+# Running the front-end
 
 Back we go into the container again
 
@@ -245,19 +307,19 @@ cd /work/sa-frontend/
 npm start
 ```
 
-Navigate to http://127.0.0.1:3000 and we see the text entry form 
+Navigate to http://127.0.0.1:3000 and we see the text entry form
 
 ----
 
-# Nginx inside a container 
+# Nginx inside a container
 
-Install nginx
+Install Nginx
 
 ```
 yum -y install nginx
 ```
 
-Commit the container 
+Commit the container
 
 ```
 ❯ docker commit devtest devtestv7
@@ -280,9 +342,9 @@ sed -i '' \
 /etc/nginx/nginx.conf
 ```
 
---- 
+---
 
-# Test nginx configuration 
+# Test nginx configuration
 
 ```
 nginx -t -c /etc/nginx/nginx.conf
@@ -325,7 +387,7 @@ docker run \
     bryanhuntesl/sentiment-analysis-frontend
 ```
 
-Test it in the browser.. it works 
+Test it in the browser.. it works
 
 http://127.0.0.1:8080
 
@@ -344,7 +406,7 @@ END
 
 ----
 
-# Build and run the logic component  
+# Build and run the logic component
 
 ```
 docker build -f Dockerfile -t $DOCKER_USER_ID/sentiment-analysis-logic .
@@ -365,7 +427,7 @@ jovial_carson
 ```
 ----
 
-Run the container on the shared network 
+Run the container on the shared network
 
 
 ```
@@ -376,7 +438,7 @@ docker run \
 --name sal \
 --network-alias sal \
 -p 5050:5000 \
-$DOCKER_USER_ID/sentiment-analysis-logic 
+$DOCKER_USER_ID/sentiment-analysis-logic
 ```
 
 ```
@@ -397,10 +459,10 @@ PING sal (172.20.0.4): 56 data bytes
 
 ---
 
-And we can curl it from the Alpine container, or the host ... 
+And we can curl it from the Alpine container, or the host ...
 
 ```
-/ # apk update && apk -y add curl 
+/ # apk update && apk -y add curl
 
 / # curl sal:5000
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
@@ -416,13 +478,13 @@ And we can curl it from the Alpine container, or the host ...
 
 ---
 
-# If you are going to use Digital Ocean 
+# If you are going to use Digital Ocean
 
 Use a Centos 7.5 instance, Centos has the best docker support.
 
 ---
 
-# Digital Ocean packages needed 
+# Digital Ocean packages needed
 
 
 ```bash
@@ -442,7 +504,7 @@ kubernetes
 
 ---
 
-Or provision your droplet with the following user-data: 
+Or provision your droplet with the following user-data:
 
 
 ```
@@ -478,15 +540,11 @@ You'll also need to start docker.
 service docker start
 ```
 
---- 
-
-
 ---
 
-Some tricks
+Some cute tricks
 
 ---
-
 
 # plotnetcfg
 
@@ -509,7 +567,6 @@ make
 
 ![inline](dockviz.sample.png)
 
-
 ---
 
 # Installing dockviz
@@ -519,13 +576,11 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz
 
 https://github.com/bryanhuntesl/dockviz
 ```
-
 ---
 
+Questions
 
-Questions 
-
-Breaktime 
+Breaktime
 
 Get hacking
 
