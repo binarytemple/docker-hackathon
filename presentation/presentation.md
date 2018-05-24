@@ -1,3 +1,8 @@
+footer: © Erlang Solutions , 2018
+slidenumbers: true
+
+
+
 # Let's get started 
 
 
@@ -195,7 +200,7 @@ Lets keep a copy.
 
 ```
 
-❯ docker commit devtest devtestv2
+❯ docker commit devtest devtest2
 sha256:af4ccff5543e1c1fbdf8d5c0200cef774ddb73eee85456a531586f12069d9f48
 
 ```
@@ -300,11 +305,11 @@ Not too bad, 'build' is what actually goes into our image
 233     ./sa-frontend/node_modules
 ```
 
-----
-
 ---
 
-And commit the container ... again . I don't want to do that twice.
+Commit the container, again...
+
+ I don't want to go through that twice.
 
 ```
 ❯ docker commit devtest devtestv4
@@ -316,6 +321,7 @@ sha256:ede9c447007a899a1663f6f2dba81a11075ebac1363bf388f3cbbd58df803ff9
 # Start the container up again, this time exposing port 3000 to the host
 
 (lucky we keep committing)
+(we need to test the network service)
 
 ```
 docker run \
@@ -329,6 +335,8 @@ devtest4
 
 ---
 
+# Running the frontend 
+
 Back we go into the container again
 
 ```
@@ -336,15 +344,19 @@ cd /work/sa-frontend/
 npm start
 ```
 
-Naviagate to http://127.0.0.1:3000 and we see the application running
+Navigate to http://127.0.0.1:3000 and we see the text entry form 
 
------
+----
 
-Lets install nginx
+# Nginx inside a container 
+
+Install nginx
 
 ```
 yum -y install nginx
 ```
+
+Commit the container 
 
 ```
 ❯ docker commit devtest devtestv7
@@ -353,17 +365,18 @@ sha256:13505023ef540fc8e4f90e0677946231043a591f0d3047a28e434578538feb61
 
 ----
 
-Inside the container, we copy the files to the nginx hosting directory
+In the container, copy the files to the nginx hosting directory
 
 ```
 cp -pr ./build/* /usr/share/nginx/html/
 ```
 
-
-Modify the listening port
+Modify the nginx listening port (you can use vim)
 
 ```
-sed -i'' -e 's|listen       80 default_server|listen       3000 default_server|' /etc/nginx/nginx.conf
+sed -i '' \
+-e 's|listen       80 default_server|listen 3000 default_server|' \
+/etc/nginx/nginx.conf
 ```
 
 --- 
@@ -403,11 +416,12 @@ Successfully tagged bryanhuntesl/sentiment-analysis-frontend:latest
 
 ---
 
-# Try running frontend 
+# Try running the frontend image
 
-```
-docker run -p8080:80 bryanhuntesl/sentiment-analysis-frontend
-
+```bash
+docker run \
+    -p8080:80 \
+    bryanhuntesl/sentiment-analysis-frontend
 ```
 
 Test it in the browser.. it works 
@@ -416,7 +430,7 @@ http://127.0.0.1:8080
 
 -----
 
-How can we make the build more efficient ?
+Make the build more efficient
 
 
 ```
@@ -429,7 +443,7 @@ END
 
 ----
 
-# Building and run the logic component  
+# Build and run the logic component  
 
 ```
 docker build -f Dockerfile -t $DOCKER_USER_ID/sentiment-analysis-logic .
@@ -452,46 +466,37 @@ jovial_carson
 ----
 
 
+Run the container on the shared network 
+
+
 ```
-bryanhuntesl/k8s-mastery/sa-logic master* 22s
-❯ . ./run-the-container                           
+docker run \
+--rm \
+--network hackday \
+--hostname sal \
+--name sal \
+--network-alias sal \
+-p 5050:5000 \
+$DOCKER_USER_ID/sentiment-analysis-logic 
+```
+
+```
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
-
-───────────────────────────────────────────────────────────
-
-❯ . ../debug/run-debug-container
-/ # ping sal
-PING sal (172.20.0.4): 56 data bytes
-64 bytes from 172.20.0.4: seq=0 ttl=64 time=0.111 ms
-...
 ```
 
 ---
 
+Interact with the container using an Alpine container on the same network :
 
 ```
-/bryanhuntesl/k8s-mastery/sa-logic master*
-❯ . ./run-the-container
-```
-
-I request once from the host... and once from my alpine instance... 
-
-```
-* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
-172.20.0.3 - - [23/May/2018 22:38:10] "GET / HTTP/1.1" 404 -
-172.20.0.3 - - [23/May/2018 22:38:21] "GET / HTTP/1.1" 404 -
-```
-
-We can ping it from another container.. 
-
-```
-/bryanhuntesl/k8s-mastery/sa-logic master*
-❯ . ../debug/run-debug-container
+❯ docker run --network hackday -ti alpine sh
 / # ping sal
 PING sal (172.20.0.4): 56 data bytes
 64 bytes from 172.20.0.4: seq=0 ttl=64 time=0.111 ms
-^C
 ```
+
+
+---
 
 And we can curl it from the Alpine container, or the host ... 
 
@@ -504,4 +509,17 @@ And we can curl it from the Alpine container, or the host ...
 ....
 ```
 
+```
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+172.20.0.3 - - [23/May/2018 22:38:10] "GET / HTTP/1.1" 404 -
+172.20.0.3 - - [23/May/2018 22:38:21] "GET / HTTP/1.1" 404 -
+```
+
+---
+
+Questions 
+
+Breaktime 
+
+Get hacking
 
