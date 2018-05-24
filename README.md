@@ -353,7 +353,7 @@ nginx -t -c /etc/nginx/nginx.conf
 And launch nginx ...
 
 ```
-nginx -t -c ~/mynginx.conf
+nginx -c /etc//nginx/nginx.conf
 ```
 
 ---
