@@ -14,9 +14,9 @@ slidenumbers: true
 
 # Resources
 
-* [Learn Kubernetes in Under 3 Hours: A Detailed Guide to Orchestrating Containers]( https://medium.freecodecamp.org/learn-kubernetes-in-under-3-hours-a-detailed-guide-to-orchestrating-containers-114ff420e882 )
+* [Learn Kubernetes in Under 3 Hours: A Detailed Guide to Orchestrating Containers](https://medium.freecodecamp.org/learn-kubernetes-in-under-3-hours-a-detailed-guide-to-orchestrating-containers-114ff420e882)
 
-* [https://github.com/bryanhuntesl/k8s-mastery]( bryanhuntesl/k8s-mastery)
+* [bryanhuntesl/k8s-mastery](https://github.com/bryanhuntesl/k8s-mastery)
 
 * Create a [docker hub]( https://hub.docker.com/ ) account if you haven't done already.
 
