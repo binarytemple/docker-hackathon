@@ -2,11 +2,21 @@ footer: © Erlang Solutions , 2018
 slidenumbers: true
 
 
+# Welcome to the docker hackathon
 
-# Let's get started 
+![](chernobyl-sarcophagus.jpg)
 
+---
 
-The absolute basics
+![](chernobyl-sarcophagus.jpg)
+
+---
+
+Introduction to the material
+
+---
+
+# The absolute basics
 
 ```
  docker run -ti alpine sh
@@ -117,44 +127,6 @@ service docker start
 
 --- 
 
-Some tricks
-
----
-
-
-# plotnetcfg
-
-![inline](plotnetcfg.png)
-
----
-
-# Installing plotnetcfg
-
-```
-git clone https://github.com/bryanhuntesl/plotnetcfg.git
-cd plotnetcfg/
-make
-./plotnetcfg
-```
-
----
-
-# dockviz
-
-![inline](dockviz.sample.png)
-
-
----
-
-# Installing dockviz
-
-```
-docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz
-
-https://github.com/bryanhuntesl/dockviz
-```
-
----
 
 Getting started 
 
@@ -516,6 +488,46 @@ And we can curl it from the Alpine container, or the host ...
 ```
 
 ---
+
+Some tricks
+
+---
+
+
+# plotnetcfg
+
+![inline](plotnetcfg.png)
+
+---
+
+# Installing plotnetcfg
+
+```
+git clone https://github.com/bryanhuntesl/plotnetcfg.git
+cd plotnetcfg/
+make
+./plotnetcfg
+```
+
+---
+
+# dockviz
+
+![inline](dockviz.sample.png)
+
+
+---
+
+# Installing dockviz
+
+```
+docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz
+
+https://github.com/bryanhuntesl/dockviz
+```
+
+---
+
 
 Questions 
 
